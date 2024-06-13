@@ -2,6 +2,7 @@
 def main():
     selected_option = display_menu()
     print(selected_option)
+    print("\n")
 
 def display_menu():
     
@@ -11,6 +12,7 @@ def display_menu():
     print("3. Remove Members")
     print("4. Add Topic/Question")
     print("5. Remove Topic Question")
+    print("\n")
 
     while True:
         try:
@@ -19,8 +21,10 @@ def display_menu():
                 return choice
             else:
                 print("Invalid choice. Please enter a number between 1 and 5.")
+                print("\n")
         except ValueError:
             print("Invalid input. Please enter a number.")
+            print("\n")
 
 def generator():
     pass
