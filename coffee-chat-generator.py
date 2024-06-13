@@ -1,4 +1,3 @@
-import random
 
 def main():
     selected_option = display_menu()
