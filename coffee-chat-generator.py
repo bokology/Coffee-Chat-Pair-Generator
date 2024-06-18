@@ -19,7 +19,7 @@ MENU_STRING = """
 """
 
 def main():
-
+    # Loop the menu until user opts to quit.
     while True:
         print(MENU_STRING)
         try:
@@ -32,27 +32,29 @@ def main():
                     topics = retrieve_topics()
                     # Assign 5 topics for each generated pairs or trio    
                     assign_topics_to_pairs(pairings_output, topics)                   
-
+                # Call the add member function
                 elif selected_option == 2:
                     add_member_loop()
-                
+                # Call the remove member function
                 elif selected_option == 3:
-                    remove_members()
-                
+                    read_members_from_csv()
+                    target_tag = input("\nPlease input user tag of member to be removed: ")
+                    remove_members(target_tag)
+                # Call add topics function. Adds to an existing list if it already exists.
                 elif selected_option == 4:
                     topics = retrieve_topics()
                     add_topics(topics)
-                
+                # View saved topics
                 elif selected_option == 5:
                     topic_questions = retrieve_topics()
                     view_topics(topic_questions)
-                
+                # Display list of team members. This is read from a file.
                 elif selected_option == 6:
                     read_members_from_csv()
                     for tag, details in team_members.items():
                         print(f"Tag: {tag} | {details['first_name']} {details['last_name']}")
                     print("---------------------\n")
-
+                # Give the user the option to quit.
                 elif selected_option == 7:
                     print("")
                     break                
@@ -102,25 +104,23 @@ def assign_topics_to_pairs(pairings_output, topics):
             print(f"- {topic}")
         print("---------------------\n")
 
-def add_members(first_name, last_name):
-    # Call a function to assign unique tag then let user enter and first and last name.
-    tag = generate_unique_tag()
-    team_members[tag] = {'first_name': first_name, 'last_name': last_name}
-    print(f"{first_name} {last_name} has been added.")
-
 def add_member_loop():
+    # Get existing member list from file
     read_members_from_csv()
     while True:
         first_name = input("Enter first name (or type 'quit' to stop): ")
         if first_name.strip().lower() == 'quit':
             break
         last_name = input("Enter last name: ")
+        # Generate unique identifier for newly enrolled member
         tag = generate_unique_tag()
         team_members[tag] = {'first_name': first_name, 'last_name': last_name}
         print(f"Added member {first_name} {last_name} with tag {tag}.")
+        # Write back newly enrolled member details to file
         write_members_to_csv()
 
 def read_members_from_csv(filename='team_members.csv'):
+    # Retrieve member list from csv file. If file is not found we work with an empty list.
     try:
         with open(filename, mode='r', newline='', encoding='utf-8') as file:
             reader = csv.reader(file)
@@ -132,14 +132,20 @@ def read_members_from_csv(filename='team_members.csv'):
         print("CSV file not found. Starting with an empty team members list.")
 
 def write_members_to_csv(filename='team_members.csv'):
+    # Write back newly enrolled names to members file
     with open(filename, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         for tag, details in team_members.items():
             writer.writerow([tag, details['first_name'], details['last_name']])
     print("Team members saved to CSV.")
 
-def remove_members():
-    pass
+def remove_members(tag):
+    if tag in team_members:
+        del team_members[tag]
+        print(f"Removed member with tag {tag}.")
+        write_members_to_csv()
+    else:
+        print(f"No member found with tag {tag}.")
 
 def generate_unique_tag():
     # Random alphanumeric tag. Makes sure generated tags are unique.
