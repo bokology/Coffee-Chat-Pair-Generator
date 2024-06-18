@@ -5,6 +5,9 @@ import csv
 # Define dictionary for team members
 team_members = {}
 
+# Set number of topics to assign to pairings
+NUM_TOPICS = int(5)
+
 MENU_STRING = """
     1. Generate New Pairings
     2. Add Members
@@ -27,19 +30,9 @@ def main():
                 if selected_option == 1:
                     pairings_output = generate_pairings()
                     topics = retrieve_topics()
-                    # Assign 3 topics for each generated pairs or trio    
-                    for pair in pairings_output:
-                        # Pick random topics from the file
-                        random_topics = random.sample(topics, 3)
-                        if len(pair)  == 2:
-                              print(f"Pair: {pair[0][1]['first_name']} {pair[0][1]['last_name']} and {pair[1][1]['first_name']} {pair[1][1]['last_name']}")
-                        elif len(pair) == 3:
-                            print(f"Trio: {pair[0][1]['first_name']} {pair[0][1]['last_name']}, {pair[1][1]['first_name']} {pair[1][1]['last_name']}, and {pair[2][1]['first_name']} {pair[2][1]['last_name']}")
-                        print("Assigned Topics:")
-                        for topic in random_topics:
-                            print(f"- {topic}")
-                        print("---------------------\n")           
-                
+                    # Assign 5 topics for each generated pairs or trio    
+                    assign_topics_to_pairs(pairings_output, topics)                   
+
                 elif selected_option == 2:
                     add_member_loop()
                 
@@ -57,13 +50,12 @@ def main():
                 elif selected_option == 6:
                     read_members_from_csv()
                     for tag, details in team_members.items():
-                        print(f"Tag: {tag} | First Name: {details['first_name']} | Last Name: {details['last_name']}")
+                        print(f"Tag: {tag} | {details['first_name']} {details['last_name']}")
                     print("---------------------\n")
 
                 elif selected_option == 7:
                     print("")
-                    break
-                
+                    break                
             else:
                 print("Invalid choice. Please enter a number between 1 and 7.")
         except ValueError:
@@ -71,6 +63,7 @@ def main():
 
 
 def generate_pairings():
+    # Check members list file
     read_members_from_csv()
     members = list(team_members.items())
     # Shuffle the list randomly
@@ -92,6 +85,22 @@ def generate_pairings():
         else:
             pairings.append((members[-3], members[-2], members[-1]))
     return pairings
+
+def assign_topics_to_pairs(pairings_output, topics):
+    for pair in pairings_output:
+        # Pick random topics from the file
+        random_topics = random.sample(topics, NUM_TOPICS)
+        if len(pair)  == 2:
+                print(f"Pair: {pair[0][1]['first_name']} {pair[0][1]['last_name']} "
+                    f"and {pair[1][1]['first_name']} {pair[1][1]['last_name']}")
+        elif len(pair) == 3:
+            print(f"Trio: {pair[0][1]['first_name']} {pair[0][1]['last_name']}, "
+                    f"{pair[1][1]['first_name']} {pair[1][1]['last_name']}, and "
+                    f"{pair[2][1]['first_name']} {pair[2][1]['last_name']}")
+        print("Assigned Topics:")
+        for topic in random_topics:
+            print(f"- {topic}")
+        print("---------------------\n")
 
 def add_members(first_name, last_name):
     # Call a function to assign unique tag then let user enter and first and last name.
@@ -119,7 +128,6 @@ def read_members_from_csv(filename='team_members.csv'):
                 if row:
                     tag, first_name, last_name = row
                     team_members[tag] = {'first_name': first_name, 'last_name': last_name}
-        print("Team members loaded from CSV.\n")
     except FileNotFoundError:
         print("CSV file not found. Starting with an empty team members list.")
 
