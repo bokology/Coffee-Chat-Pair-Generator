@@ -18,12 +18,13 @@ MENU_STRING = """
     7. Quit Application
 """
 
+
 def main():
     # Loop the menu until user opts to quit.
     while True:
         print(MENU_STRING)
         try:
-            selected_option = int(input("\nEnter your choice (1-7): "))            
+            selected_option = int(input("\nEnter your choice (1-7): "))
             # Check if user input is within range of valid numbers.
             if 1 <= selected_option <= 7:
                 # Generate random pairs and random topic assignments.
@@ -31,8 +32,8 @@ def main():
                     pairings_output = generate_pairings()
                     topics = retrieve_topics()
                     # Assign 5 topics for each generated pairs or trio    
-                    assign_topics_to_pairs(pairings_output, topics)                   
-                # Call the add member function
+                    assign_topics_to_pairs(pairings_output, topics)
+                    # Call the add member function
                 elif selected_option == 2:
                     add_member_loop()
                 # Call the remove member function
@@ -57,7 +58,7 @@ def main():
                 # Give the user the option to quit.
                 elif selected_option == 7:
                     print("")
-                    break                
+                    break
             else:
                 print("Invalid choice. Please enter a number between 1 and 7.")
         except ValueError:
@@ -88,21 +89,23 @@ def generate_pairings():
             pairings.append((members[-3], members[-2], members[-1]))
     return pairings
 
+
 def assign_topics_to_pairs(pairings_output, topics):
     for pair in pairings_output:
         # Pick random topics from the file
         random_topics = random.sample(topics, NUM_TOPICS)
-        if len(pair)  == 2:
-                print(f"Pair: {pair[0][1]['first_name']} {pair[0][1]['last_name']} "
-                    f"and {pair[1][1]['first_name']} {pair[1][1]['last_name']}")
+        if len(pair) == 2:
+            print(f"Pair: {pair[0][1]['first_name']} {pair[0][1]['last_name']} "
+                  f"and {pair[1][1]['first_name']} {pair[1][1]['last_name']}")
         elif len(pair) == 3:
             print(f"Trio: {pair[0][1]['first_name']} {pair[0][1]['last_name']}, "
-                    f"{pair[1][1]['first_name']} {pair[1][1]['last_name']}, and "
-                    f"{pair[2][1]['first_name']} {pair[2][1]['last_name']}")
+                  f"{pair[1][1]['first_name']} {pair[1][1]['last_name']}, and "
+                  f"{pair[2][1]['first_name']} {pair[2][1]['last_name']}")
         print("Assigned Topics:")
         for topic in random_topics:
             print(f"- {topic}")
         print("---------------------\n")
+
 
 def add_member_loop():
     # Get existing member list from file
@@ -119,6 +122,7 @@ def add_member_loop():
         # Write back newly enrolled member details to file
         write_members_to_csv()
 
+
 def read_members_from_csv(filename='team_members.csv'):
     # Retrieve member list from csv file. If file is not found we work with an empty list.
     try:
@@ -131,6 +135,7 @@ def read_members_from_csv(filename='team_members.csv'):
     except FileNotFoundError:
         print("CSV file not found. Starting with an empty team members list.")
 
+
 def write_members_to_csv(filename='team_members.csv'):
     # Write back newly enrolled names to members file
     with open(filename, mode='w', newline='', encoding='utf-8') as file:
@@ -138,6 +143,7 @@ def write_members_to_csv(filename='team_members.csv'):
         for tag, details in team_members.items():
             writer.writerow([tag, details['first_name'], details['last_name']])
     print("Team members saved to CSV.")
+
 
 def remove_members(tag):
     if tag in team_members:
@@ -147,12 +153,14 @@ def remove_members(tag):
     else:
         print(f"No member found with tag {tag}.")
 
+
 def generate_unique_tag():
     # Random alphanumeric tag. Makes sure generated tags are unique.
     while True:
         tag = ''.join(random.choices(string.digits, k=3))
         if tag not in team_members:
             return tag
+
 
 def retrieve_topics(filename='topics.txt'):
     try:
@@ -162,26 +170,30 @@ def retrieve_topics(filename='topics.txt'):
         return topic_list
     except FileNotFoundError:
         print("Warning! Topic file not found. Please add topics using the menu.")
-        return[]
+        return []
+
 
 def add_topics(topics):
     while True:
         new_topic = input("Enter a new topic (or type 'quit' to go back to the menu.): ")
         if new_topic.strip().lower() == 'quit':
-           break
+            break
         topics.append(new_topic)
         print(f"Added topic: {new_topic}")
     write_topics_to_file(topics)
- 
+
+
 def write_topics_to_file(topics, filename='topics.txt'):
     with open(filename, mode='w', encoding='utf-8') as file:
         for topic in topics:
             file.write(f"{topic}\n")
     print("Topics saved to file.")
 
+
 def view_topics(topics):
     for topic in topics:
         print(topic)
+
 
 if __name__ == "__main__":
     main()
